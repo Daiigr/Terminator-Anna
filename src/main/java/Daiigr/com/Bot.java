@@ -8,6 +8,9 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 
 import javax.security.auth.login.LoginException;
 
@@ -16,13 +19,42 @@ import javax.security.auth.login.LoginException;
 public class Bot extends ListenerAdapter{
     private String StringMessage;
     private String CallerTarget;
+    private static String Token;
     public static void main(String[] args) throws LoginException{
-    
 
-        JDABuilder.createDefault("ODIyNDkzNDExNDcwNDc1MjY1.YFTErg.X7MB45mi7mlkmWPpsrJxGOpvTHU").addEventListeners(new Bot())
+        try {
+            File myObj = new File("Token.txt");
+            if (myObj.createNewFile()) {
+              System.out.println("File created, please insert token " + myObj.getName());
+              System.exit(0);
+            } else {
+              System.out.println("Token.txt exists. Looking for token");
+            }
+
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                Token = myReader.nextLine();
+                if(Token.isEmpty()==true){
+                    System.out.println("No Token Detected");
+                }else{
+                System.out.println("Token Detected");
+                }
+            }
+        myReader.close();
+          } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+          }
+        
+    try {
+        JDABuilder.createDefault(Token).addEventListeners(new Bot())
         .setActivity(Activity.playing("Anna Simulator"))
         .build();
+    } catch (Exception e) {
+        System.out.print("Invalid Token");
     }
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
         Message msg = event.getMessage();
